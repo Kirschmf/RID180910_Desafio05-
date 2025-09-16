@@ -29,15 +29,24 @@ const livros: Livro[] = [
 let nextId = 3
 
 export async function GET() {
-  return NextResponse.json(livros)
+  console.log("[v0] API GET /api/livros called")
+  try {
+    return NextResponse.json(livros)
+  } catch (error) {
+    console.log("[v0] Error in GET /api/livros:", error)
+    return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 })
+  }
 }
 
 export async function POST(request: NextRequest) {
+  console.log("[v0] API POST /api/livros called")
   try {
     const body = await request.json()
+    console.log("[v0] Request body:", body)
 
     // Validate required fields
     if (!body.titulo || !body.num_paginas || !body.isbn || !body.editora) {
+      console.log("[v0] Validation failed - missing fields")
       return NextResponse.json({ error: "Todos os campos são obrigatórios" }, { status: 400 })
     }
 
@@ -50,9 +59,11 @@ export async function POST(request: NextRequest) {
     }
 
     livros.push(novoLivro)
+    console.log("[v0] New book created:", novoLivro)
 
     return NextResponse.json(novoLivro, { status: 201 })
   } catch (error) {
+    console.log("[v0] Error in POST /api/livros:", error)
     return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 })
   }
 }
